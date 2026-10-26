@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JKT Estimate – Rod Billing</title>
+<style>
+:root{--bg:#f4f6fa;--cd:#fff;--tx:#1b2430;--mu:#6b7686;--pr:#c2410c;--bd:#d9dee6;--hl:#fff1e6}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12161c;--cd:#1b222b;--tx:#e8edf3;--mu:#9aa6b5;--pr:#fb923c;--bd:#2d3744;--hl:#33261b;color-scheme:dark}}
+:root[data-theme=dark]{--bg:#12161c;--cd:#1b222b;--tx:#e8edf3;--mu:#9aa6b5;--pr:#fb923c;--bd:#2d3744;--hl:#33261b;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;font:15px system-ui,Arial,sans-serif;background:var(--bg);color:var(--tx)}
+h2,h3{margin:0 0 10px}
+.wrap{max-width:1000px;margin:0 auto;padding:14px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px;overflow-x:auto}
+input,select,button{font:inherit;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)}
+input:focus,select:focus{outline:2px solid var(--pr)}
+button{cursor:pointer}button.p{background:var(--pr);color:#fff;border-color:var(--pr);font-weight:600}
+button.dg{color:#dc2626;border-color:#dc2626}
+table{width:100%;border-collapse:collapse}th,td{padding:6px;text-align:left;border-bottom:1px solid var(--bd)}th{color:var(--mu);font-size:13px}
+td input,td select{width:100%}.ac{white-space:nowrap}.ac button{margin-right:4px;padding:5px 9px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}nav button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.tot{display:flex;gap:20px;justify-content:flex-end;font-size:18px;margin:10px 0}
+#bl tr:focus,#bl tr.sel{background:var(--hl);outline:2px solid var(--pr)}
+#lg{max-width:340px;margin:12vh auto;padding:14px}.err{color:#dc2626;min-height:20px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.row input{flex:1;min-width:120px}
+small,.mu{color:var(--mu)}a.l{color:var(--pr);cursor:pointer;text-decoration:underline}
+#sgb{position:fixed;z-index:50;background:var(--cd);border:1px solid var(--bd);border-radius:8px;box-shadow:0 6px 20px #0004;max-height:240px;overflow:auto}
+#sgb div{padding:8px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:14px}
+#sgb div.on{background:var(--pr);color:#fff}#sgb div.on small{color:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:1px solid var(--bd);border-radius:20px;padding:3px 10px;font-size:13px}.chip.use{background:var(--hl);border-color:var(--pr)}
+.neg{color:#dc2626!important;border-color:#dc2626}.lf{white-space:nowrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:14px}
+.dc{margin:0}.big{font-size:22px;font-weight:700}.bar{height:6px;background:var(--bd);border-radius:4px;margin-top:8px}.bar i{display:block;height:100%;background:var(--pr);border-radius:4px}
+#pa{display:none}
+@page{size:A4;margin:12mm}
+@media print{body>*:not(#pa){display:none!important}
+#pa{display:block;color:#000;background:#fff;font:13px Arial,sans-serif}
+#pa .ph{text-align:center;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:10px}
+#pa h1{margin:0;font-size:30px;letter-spacing:3px;text-transform:uppercase}
+#pa .tt{display:inline-block;margin-top:6px;border:1px solid #000;padding:2px 14px;font-weight:700;letter-spacing:2px}
+#pa .pm{display:flex;justify-content:space-between;border:1px solid #000;padding:8px 10px;margin-bottom:10px;line-height:1.6}
+#pa table{width:100%;border-collapse:collapse}
+#pa .pt th{background:#e6e6e6!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;border:1px solid #000;padding:6px;color:#000;font-size:12px}
+#pa .pt td{border:1px solid #000;padding:6px;color:#000;text-align:right}
+#pa .pt td:nth-child(1){text-align:center}#pa .pt td:nth-child(2){text-align:left}
+#pa .pt tr.e td{height:24px}#pa .pt tfoot td{font-weight:700;background:#f2f2f2!important}#pa .pt tfoot td:first-child{text-align:right}
+#pa .pw{margin:10px 0;padding:6px 8px;border:1px dashed #000}
+#pa .pf{display:flex;justify-content:space-between;align-items:flex-end;margin:10px 0;line-height:1.8}
+#pa .gt{border:2px solid #000;padding:6px 16px;text-align:right}#pa .gt span{font-size:22px;font-weight:700}
+#pa .st{font-weight:700;border:2px solid #000;padding:1px 10px}#pa .st.PENDING{border-style:dashed}
+#pa .ps{display:flex;justify-content:flex-end;margin-top:60px}#pa .ps div{border-top:1px solid #000;padding-top:4px;min-width:200px;text-align:center}
+#pa .pn{margin-top:28px;text-align:center;font-size:11px;border-top:1px solid #000;padding-top:6px}}
+</style></head><body>
+
+<div id="lg" class="card">
+  <h2>🔩 JKT Estimate</h2><p class="mu">Rod Billing &amp; Stock</p>
+  <div class="row"><input id="lid" placeholder="ID" autocomplete="username"></div>
+  <div class="row"><input id="lpw" type="password" placeholder="Password" autocomplete="current-password"></div>
+  <div class="err" id="lerr"></div>
+  <button class="p" style="width:100%" onclick="login()">Login</button>
+  <button class="tgl" style="width:100%;margin-top:8px" onclick="tg()"></button>
+  <p><a class="l" onclick="forgot()">Forgot password? (owner)</a><br>
+  <a class="l" onclick="document.getElementById('rf0').click()">Restore backup file (owner)</a></p>
+  <input type="file" id="rf0" accept=".json" hidden onchange="rf(this)">
+</div>
+
+<div id="app" class="wrap" hidden>
+  <nav>
+    <button id="b_dash" onclick="show('dash')">📊 Dashboard</button>
+    <button id="b_bill" onclick="show('bill')">🧾 Billing</button>
+    <button id="b_stock" onclick="show('stock')">📦 Stock</button>
+    <button id="b_set" onclick="show('set')">⚙️ Settings &amp; Backup</button>
+    <span id="fs" class="mu" style="margin-left:auto;align-self:center;font-size:13px"></span><button class="tgl" onclick="tg()"></button><button onclick="logout()">Logout</button>
+  </nav>
+
+  <div id="t_dash" hidden>
+    <div class="card"><h3>Total available stock</h3><div id="dtot"></div></div>
+    <div id="dgrid" class="grid"></div>
+    <div class="card"><h3>Sales &amp; payments</h3><div id="dsal"></div></div>
+  </div>
+
+  <div id="t_bill">
+    <div class="card">
+      <h3 id="bt">New Bill</h3>
+      <div class="row"><input id="cn" placeholder="Customer name"><input id="cp" placeholder="Phone"><select id="py" style="flex:1;min-width:150px"><option value="Cash">Cash</option><option value="Online">Online</option><option value="Pending">Not paid (Pending)</option></select></div>
+      <div class="mu"><small>Live stock (updates as you bill):</small></div><div id="ls" class="chips"></div>
+      <table><thead><tr><th style="width:32%">Rod size (type or pick)</th><th>Weight (kg)</th><th>Rate / kg</th><th>Amount</th><th>Stock left</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+      <div class="tot"><span>Total kg: <b id="tk">0.00</b></span><span>Total: ₹<b id="ta">0.00</b></span></div>
+      <button onclick="addRow().querySelector('select').focus()">+ Add row</button>
+      <button class="p" id="sb" onclick="saveBill()">Save Bill</button>
+      <button class="p" onclick="saveBill(true)">Save &amp; Print</button>
+      <button onclick="newBill()">Clear / New</button>
+      <p><small>Enter = next box · type size (e.g. 7 or TMT) · ↑ ↓ pick from list · Enter on last rate = new row · Ctrl+Enter = save</small></p>
+    </div>
+    <div class="card">
+      <h3>Previous bills</h3>
+      <div class="row"><input id="sq" placeholder="Search customer or bill no" oninput="rl()"></div>
+      <table><thead><tr><th>No</th><th>Date</th><th>Customer</th><th>Kg</th><th>Total</th><th>Payment</th><th></th></tr></thead><tbody id="bl"></tbody></table>
+      <small>Click a row, use ↑ ↓ to move, Enter to open for edit.</small>
+    </div>
+  </div>
+
+  <div id="t_stock" hidden>
+    <div class="card">
+      <h3>Add rod size</h3>
+      <div class="row"><input id="zn" list="zp" placeholder="Pick or type e.g. TMT ROD 7 MM" style="text-transform:uppercase"><datalist id="zp"></datalist><input id="zcode" placeholder="Rod code (blank = auto)"><input id="zw" type="number" step="any" placeholder="Weight per rod (kg)"><input id="zk" type="number" step="any" placeholder="Opening stock (kg)"><input id="zr" type="number" step="any" placeholder="Rate / kg"><button class="p" onclick="az()">Add size</button><button onclick="addPresets()">Add all TMT sizes</button></div>
+      <small>Codes (ROD-001, ROD-002 …) are made automatically if left blank and can be changed later in the table. Names are saved in CAPITAL letters. “Weight per rod” fills the kg box in billing when the size is picked.</small>
+    </div>
+    <div class="card">
+      <h3>Read weights from image</h3>
+      <div class="row"><select id="oz"></select><input type="file" id="of" accept="image/*" onchange="oimg(this)"><button class="p" id="ob" onclick="ocr()">Read image</button></div>
+      <img id="oi" alt="" style="max-width:260px;max-height:200px;display:none;border-radius:8px;margin-bottom:8px">
+      <div id="os" class="mu"></div>
+      <div id="ores" hidden>
+        <textarea id="otx" rows="6" oninput="osum()" style="width:100%;font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--cd);color:var(--tx)"></textarea>
+        <div class="tot"><span>Weights found: <b id="ocnt">0</b></span><span>Total: <b id="otot">0.00</b> kg</span></div>
+        <button class="p" onclick="oadd()">Add total to selected size stock</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Stock inventory</h3>
+      <div class="row"><input id="zs" placeholder="Search by size or rod code" oninput="rs()"></div>
+      <table><thead><tr><th>Code</th><th>Size</th><th>Wt / rod</th><th>Rate</th><th>In stock</th><th>Add / Set kg</th><th></th></tr></thead><tbody id="sl"></tbody></table>
+      <small>Click History to see every stock-in and bill deduction for that size. Type kg in the box, then “+ Add” to add stock or “Set” to replace it. Bills deduct stock automatically.</small>
+    </div>
+  </div>
+
+  <div id="t_set" hidden>
+    <div class="card">
+      <h3>Shop &amp; login</h3>
+      <div class="row"><input id="sn" placeholder="Shop name on print"></div>
+      <div class="row"><input id="sa" placeholder="Address / phone line on print"></div>
+      <div class="row"><input id="ni" placeholder="New admin ID (blank = keep)"><input id="np" type="password" placeholder="New password (blank = keep)"></div>
+      <div class="row"><input id="nr" placeholder="Owner recovery key (blank = keep)"></div>
+      <p class="mu">Current recovery key: <b id="rk"></b> — keep it private. It resets the password if forgotten.</p>
+      <button class="p" onclick="ss()">Save settings</button>
+    </div>
+    <div class="card">
+      <h3>Permanent save on this computer</h3>
+      <p class="mu" id="fst"></p>
+      <p class="mu">Link a data file once. After that every bill and stock change is written into it automatically (use Chrome or Edge on PC). You may be asked to allow access when you login.</p>
+      <button class="p" onclick="fsNew()">Create data file</button>
+      <button onclick="fsOpen()">Open existing data file</button>
+    </div>
+    <div class="card">
+      <h3>Backup</h3>
+      <p class="mu">Download a backup often. It holds all bills, stock, ID and password.</p>
+      <button class="p" onclick="bk()">⬇ Download backup</button>
+      <button onclick="document.getElementById('rf1').click()">⬆ Restore backup</button>
+      <input type="file" id="rf1" accept=".json" hidden onchange="rf(this)">
+    </div>
+  </div>
+</div>
+
+<div id="sgb" hidden></div>
+<div id="pa"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
+<script>
+const $=s=>document.querySelector(s),Q=s=>[...document.querySelectorAll(s)],
+esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+K='jktrod_v1';
+let DB,editNo=null;
+
+const PRE=[6,7,8,10,12,16,20,25,28,32],PAY={Cash:'Cash',Online:'Online',Pending:'Not paid (Pending)'};
+const pn=n=>'TMT ROD '+n+' MM';
+function addSize(n,st,rt,code,w){
+  code=(code||'').trim().toUpperCase();
+  if(!code){do{code='ROD-'+String(DB.cn++).padStart(3,'0')}while(DB.sizes.some(z=>z.code==code))}
+  DB.sizes.push({code,name:n.trim().toUpperCase(),stock:+st||0,rate:+rt||0,w:+w||0,log:[]});
+}
+function ld(){
+  try{DB=JSON.parse(localStorage.getItem(K))}catch(e){}
+  if(!DB||!DB.u){
+    DB={u:{id:'admin',pw:'monu',rk:'JKT-OWNER-KEY'},shop:'JKT ESTIMATE',sizes:[],bills:[],bn:1,cn:1};
+    [7,8,10,12,16,20,25].forEach(m=>addSize(pn(m),0,0));sv();
+  }
+  DB.sizes.forEach(z=>{z.log=z.log||[];z.w=z.w||0;z.name=z.name.toUpperCase();const m=/^(?:TMT ROD\s*)?(\d+(?:\.\d+)?)\s*(?:MM)?$/i.exec(z.name);if(m)z.name=pn(m[1])});
+  if(!DB.shop||DB.shop=='JKT ESTIMATE')DB.shop='JKT ROD BILLING';DB.addr=DB.addr||'';
+  sortSizes();sv();
+}
+let FH=null,wt=null;
+function sv(){DB.ts=Date.now();try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){}clearTimeout(wt);wt=setTimeout(wf,400)}
+
+/* ---------- login ---------- */
+async function login(){await syncFile();applyTheme();
+  if($('#lid').value.trim()==DB.u.id&&$('#lpw').value==DB.u.pw){
+    $('#lg').hidden=true;$('#app').hidden=false;$('#lerr').textContent='';show('bill');newBill();
+  }else $('#lerr').textContent='Wrong ID or password';
+}
+function logout(){$('#app').hidden=true;$('#lg').hidden=false;$('#lpw').value=''}
+async function forgot(){await syncFile();
+  const k=prompt('Enter owner recovery key');if(k===null)return;
+  if(k===DB.u.rk){const p=prompt('Enter new password');if(p){DB.u.pw=p;sv();alert('Password reset. Please login.')}}
+  else alert('Wrong recovery key');
+}
+$('#lpw').addEventListener('keydown',e=>{if(e.key=='Enter')login()});
+$('#lid').addEventListener('keydown',e=>{if(e.key=='Enter')$('#lpw').focus()});
+
+/* ---------- tabs ---------- */
+function show(t){fsUi();
+  ['dash','bill','stock','set'].forEach(x=>{$('#t_'+x).hidden=x!=t;$('#b_'+x).classList.toggle('on',x==t)});
+  if(t=='stock')rs();
+  if(t=='dash')dash();
+  if(t=='bill'){rl();calc()}
+  if(t=='set'){$('#sn').value=DB.shop;$('#sa').value=DB.addr||'';$('#rk').textContent=DB.u.rk}
+}
+
+/* ---------- billing ---------- */
+const num=n=>{const m=String(n).match(/\d+(\.\d+)?/);return m?+m[0]:1e9};
+function sortSizes(){DB.sizes.sort((a,b)=>num(a.name)-num(b.name)||a.name.localeCompare(b.name))}
+function zc(c){return DB.sizes.find(z=>z.code==c)}
+function oldQty(c){const o=editNo&&DB.bills.find(b=>b.no==editNo);return o?o.items.filter(i=>i.code==c).reduce((a,i)=>a+i.kg,0):0}
+function rowCode(inp){
+  const v=inp.value.trim().toLowerCase(),z=DB.sizes.find(z=>z.name.toLowerCase()==v);
+  inp.dataset.code=z?z.code:'';return inp.dataset.code;
+}
+function used(){const u={};Q('#rows tr').forEach(r=>{const c=rowCode(r.querySelector('.sz')),w=+r.querySelector('.kg').value||0;if(c)u[c]=(u[c]||0)+w});return u}
+function left(c,u){const z=zc(c);return z?z.stock+oldQty(c)-((u||used())[c]||0):0}
+
+let SG={inp:null,list:[],i:0,moved:0};
+function matches(q){
+  const t=q.toLowerCase().split(/\s+/).filter(Boolean);
+  if(!t.length)return DB.sizes.slice();
+  return DB.sizes.filter(z=>{const w=(z.name+' '+z.code).toLowerCase().split(/[\s-]+/);return t.every(x=>w.some(y=>y.startsWith(x)))});
+}
+function fk(tr){const k=tr.querySelector('.kg');k.focus();k.select()}
+function hideSg(){$('#sgb').hidden=true}
+function showSg(inp){
+  SG={inp,list:matches(inp.value),i:0,moved:0};
+  const b=$('#sgb');if(!SG.list.length){b.hidden=true;return}
+  const u=used(),r=inp.getBoundingClientRect();
+  b.style.left=r.left+'px';b.style.top=(r.bottom+2)+'px';b.style.minWidth=r.width+'px';
+  b.innerHTML=SG.list.map((z,k)=>`<div data-c="${z.code}" class="${k?'':'on'}"><span>${esc(z.name)}</span><small>${left(z.code,u).toFixed(2)} kg</small></div>`).join('');
+  b.hidden=false;
+}
+function mv(d){
+  const c=$('#sgb').children;if(!c.length)return;
+  c[SG.i].classList.remove('on');SG.i=(SG.i+d+c.length)%c.length;
+  c[SG.i].classList.add('on');c[SG.i].scrollIntoView({block:'nearest'});SG.moved=1;
+}
+function pick(inp,c){
+  const z=zc(c);if(!z)return;
+  inp.value=z.name;inp.dataset.code=c;
+  const tr=inp.closest('tr');if(z.rate)tr.querySelector('.rt').value=z.rate;if(z.w)tr.querySelector('.kg').value=z.w;
+  hideSg();calc();
+}
+$('#sgb').addEventListener('mousedown',e=>{
+  e.preventDefault();const d=e.target.closest('div[data-c]');
+  if(d&&SG.inp){pick(SG.inp,d.dataset.c);fk(SG.inp.closest('tr'))}
+});
+addEventListener('scroll',e=>{if(e.target===document)hideSg()},true);
+
+function addRow(it){
+  const tr=document.createElement('tr'),z=it&&zc(it.code);
+  tr.innerHTML=`<td><input class="sz" placeholder="Type size e.g. 7 or TMT" autocomplete="off" value="${z?esc(z.name):''}"></td><td><input class="kg" type="number" step="any" min="0" value="${it?it.kg:''}"></td><td><input class="rt" type="number" step="any" min="0" value="${it?it.rate:''}"></td><td class="am">0.00</td><td class="lf">–</td><td><button class="dg" tabindex="-1">✕</button></td>`;
+  $('#rows').appendChild(tr);
+  const s=tr.querySelector('.sz');
+  s.oninput=()=>showSg(s);
+  s.onfocus=()=>showSg(s);
+  s.onblur=()=>setTimeout(()=>{if(SG.inp===s)hideSg();calc()},150);
+  tr.oninput=calc;
+  tr.querySelector('button').onclick=()=>{tr.remove();if(!$('#rows').children.length)addRow();calc()};
+  return tr;
+}
+function calc(){
+  let k=0,t=0;const u=used();
+  Q('#rows tr').forEach(r=>{
+    const c=rowCode(r.querySelector('.sz')),w=+r.querySelector('.kg').value||0,p=+r.querySelector('.rt').value||0,l=r.querySelector('.lf');
+    r.querySelector('.am').textContent=(w*p).toFixed(2);k+=w;t+=w*p;
+    if(c){const v=left(c,u);l.textContent=v.toFixed(2)+' kg';l.className='lf'+(v<-1e-9?' neg':'')}else{l.textContent='–';l.className='lf'}
+  });
+  $('#tk').textContent=k.toFixed(2);$('#ta').textContent=t.toFixed(2);
+  $('#ls').innerHTML=DB.sizes.map(z=>{const v=left(z.code,u);return `<span class="chip${v<-1e-9?' neg':''}${u[z.code]?' use':''}">${esc(z.name)}: <b>${v.toFixed(2)}</b></span>`}).join('');
+}
+function newBill(){
+  editNo=null;$('#cn').value=$('#cp').value='';$('#py').value='Cash';$('#rows').innerHTML='';addRow();calc();
+  $('#bt').textContent='New Bill #'+DB.bn;$('#sb').textContent='Save Bill';
+}
+/* Enter = next box */
+$('#t_bill').addEventListener('keydown',e=>{
+  const t=e.target;
+  if(e.key=='Enter'&&e.ctrlKey){e.preventDefault();return saveBill()}
+  if(t.classList&&t.classList.contains('sz')){
+    const open=!$('#sgb').hidden&&SG.list.length;
+    if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();if(!open)showSg(t);else mv(e.key=='ArrowDown'?1:-1);return}
+    if(e.key=='Escape'){hideSg();return}
+    if(e.key=='Enter'){
+      e.preventDefault();
+      if(open&&(t.value.trim()||SG.moved))pick(t,SG.list[SG.i].code);
+      if(!rowCode(t))return;
+      fk(t.closest('tr'));return;
+    }
+  }
+  if(e.key!='Enter'||!/INPUT|SELECT/.test(t.tagName)||t.id=='sq')return;
+  e.preventDefault();
+  const l=Q('#cn,#cp,#py,#rows .sz,#rows .kg,#rows .rt'),i=l.indexOf(t);
+  if(i<l.length-1)l[i+1].focus();
+  else addRow().querySelector('.sz').focus();
+});
+function saveBill(pf){
+  let bad='';
+  const items=Q('#rows tr').map(r=>{
+    const inp=r.querySelector('.sz'),c=rowCode(inp),z=zc(c),kg=+r.querySelector('.kg').value||0,rate=+r.querySelector('.rt').value||0;
+    if(inp.value.trim()&&!z)bad=inp.value.trim();
+    return z&&kg>0?{code:c,size:z.name,kg,rate,amt:+(kg*rate).toFixed(2)}:null;
+  }).filter(Boolean);
+  if(bad)return alert('Size "'+bad+'" not found. Pick it from the list.');
+  if(!items.length)return alert('Enter rod size and weight');
+  const old=editNo?DB.bills.find(b=>b.no==editNo):null,av={};
+  DB.sizes.forEach(s=>av[s.code]=s.stock);
+  if(old)old.items.forEach(i=>{if(i.code in av)av[i.code]+=i.kg});
+  for(const i of items){
+    av[i.code]-=i.kg;
+    if(av[i.code]<-1e-9)return alert('Not enough stock for '+i.size+'. Short by '+(-av[i.code]).toFixed(2)+' kg');
+  }
+  DB.sizes.forEach(s=>s.stock=+av[s.code].toFixed(3));
+  const b={no:old?old.no:DB.bn++,date:old?old.date:new Date().toISOString(),cust:$('#cn').value.trim()||'Cash',ph:$('#cp').value.trim(),pay:$('#py').value,items,
+    kg:+items.reduce((a,i)=>a+i.kg,0).toFixed(3),total:+items.reduce((a,i)=>a+i.amt,0).toFixed(2)};
+  if(old)Object.assign(old,b);else DB.bills.unshift(b);
+  sv();newBill();rl();if(pf)pr(b.no);
+}
+
+/* ---------- saved bills ---------- */
+function rl(){
+  const q=($('#sq').value||'').toLowerCase();
+  $('#bl').innerHTML=DB.bills.filter(b=>(b.cust+' '+b.no+' '+(PAY[b.pay]||'')).toLowerCase().includes(q)).map(b=>
+    `<tr tabindex="0" data-no="${b.no}"><td>#${b.no}</td><td>${new Date(b.date).toLocaleString()}</td><td>${esc(b.cust)}</td><td>${b.kg}</td><td>${b.total.toFixed(2)}</td><td class="${b.pay=='Pending'?'neg':''}">${PAY[b.pay]||'–'}</td><td class="ac"><button onclick="pr(${b.no})">Print</button><button onclick="ed(${b.no})">Edit</button><button class="dg" onclick="del(${b.no})">Delete</button></td></tr>`
+  ).join('')||'<tr><td colspan="7">No bills yet</td></tr>';
+}
+$('#bl').addEventListener('keydown',e=>{
+  const r=e.target.closest('tr');if(!r||e.target.tagName=='BUTTON')return;
+  if(e.key=='ArrowDown'){e.preventDefault();r.nextElementSibling&&r.nextElementSibling.focus()}
+  else if(e.key=='ArrowUp'){e.preventDefault();r.previousElementSibling&&r.previousElementSibling.focus()}
+  else if(e.key=='Enter'&&r.dataset.no)ed(+r.dataset.no);
+});
+function ed(no){
+  const b=DB.bills.find(b=>b.no==no);if(!b)return;
+  editNo=no;$('#cn').value=b.cust;$('#cp').value=b.ph;$('#py').value=b.pay||'Cash';$('#rows').innerHTML='';
+  b.items.forEach(i=>addRow(i));calc();
+  $('#bt').textContent='Editing Bill #'+no;$('#sb').textContent='Update Bill #'+no;
+  scrollTo({top:0,behavior:'smooth'});
+}
+function del(no){
+  const b=DB.bills.find(b=>b.no==no);if(!b)return;
+  if(!confirm('Delete bill #'+no+' permanently?'))return;
+  if(confirm('Return the billed weight to stock?'))b.items.forEach(i=>{const z=DB.sizes.find(z=>z.code==i.code);if(z)z.stock=+(z.stock+i.kg).toFixed(3)});
+  DB.bills=DB.bills.filter(x=>x.no!=no);sv();if(editNo==no)newBill();rl();
+}
+function words(n){
+  const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'],
+  t=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'],
+  two=x=>x<20?a[x]:t[(x/10)|0]+(x%10?' '+a[x%10]:''),
+  th=x=>(x>99?a[(x/100)|0]+' Hundred'+(x%100?' ':''):'')+(x%100?two(x%100):'');
+  if(!n)return 'Zero Rupees Only';
+  const cr=(n/1e7)|0,la=((n%1e7)/1e5)|0,tk=((n%1e5)/1e3)|0,r=n%1e3;let o='';
+  if(cr)o+=th(cr)+' Crore ';if(la)o+=two(la)+' Lakh ';if(tk)o+=two(tk)+' Thousand ';if(r)o+=th(r);
+  return 'Rupees '+o.trim()+' Only';
+}
+function pr(no){
+  const b=DB.bills.find(b=>b.no==no);if(!b)return;
+  const pend=b.pay=='Pending',f2=x=>(+x).toFixed(2);
+  const rows=b.items.map((i,n)=>`<tr><td>${n+1}</td><td>${esc(i.size)}</td><td>${f2(i.kg)}</td><td>${f2(i.rate)}</td><td>${f2(i.amt)}</td></tr>`).join('')
+    +'<tr class="e"><td></td><td></td><td></td><td></td><td></td></tr>'.repeat(Math.max(0,8-b.items.length));
+  $('#pa').innerHTML=`<div class="ph"><h1>${esc(DB.shop)}</h1><div>${esc(DB.addr||'')}</div><div class="tt">ESTIMATE / BILL</div></div>
+  <div class="pm"><div><b>Customer:</b> ${esc(b.cust)}<br><b>Phone:</b> ${esc(b.ph||'-')}</div><div style="text-align:right"><b>Date:</b> ${new Date(b.date).toLocaleString()}</div></div>
+  <table class="pt"><thead><tr><th style="width:36px">#</th><th>Description</th><th style="width:90px">Weight (kg)</th><th style="width:90px">Rate (₹/kg)</th><th style="width:100px">Amount (₹)</th></tr></thead><tbody>${rows}</tbody>
+  <tfoot><tr><td colspan="2">Total</td><td>${f2(b.kg)}</td><td></td><td>${f2(b.total)}</td></tr></tfoot></table>
+  <div class="pw"><b>Amount in words:</b> ${words(Math.round(b.total))}</div>
+  <div class="pf"><div><b>Payment mode:</b> ${PAY[b.pay]||'-'}<br><b>Status:</b> <span class="st ${pend?'PENDING':'PAID'}">${pend?'PENDING':'PAID'}</span></div><div class="gt">Grand Total<br><span>₹ ${f2(b.total)}</span></div></div>
+  <div class="ps"><div>For ${esc(DB.shop)}<br>Authorised signatory</div></div>
+  <div class="pn">Goods once sold will not be taken back. Thank you for your business!</div>`;
+  window.print();
+}
+
+/* ---------- stock ---------- */
+let openL=-1;
+function ledger(s){
+  const r=[...(s.log||[]).map(x=>({d:x.d,a:x.t=='in'?'Stock added'+(x.n?' – '+esc(x.n):''):'Stock set to '+x.kg+' kg',c:x.t=='in'?'+'+x.kg:''})),
+    ...DB.bills.flatMap(b=>b.items.filter(i=>i.code==s.code).map(i=>({d:b.date,a:'Bill #'+b.no+' – '+esc(b.cust),c:'-'+i.kg})))]
+    .sort((a,b)=>a.d<b.d?1:-1);
+  return `<b>${esc(s.name)} · ${esc(s.code)} · available ${s.stock.toFixed(2)} kg</b><table><tr><th>Date</th><th>Detail</th><th>Kg</th></tr>`+
+    (r.map(x=>`<tr><td>${new Date(x.d).toLocaleString()}</td><td>${x.a}</td><td>${x.c}</td></tr>`).join('')||'<tr><td colspan="3">No entries yet</td></tr>')+'</table>';
+}
+function rs(){
+  sortSizes();
+  $('#zp').innerHTML=PRE.map(n=>`<option value="${pn(n)}">`).join('');
+  const ov=$('#oz').value;$('#oz').innerHTML=DB.sizes.map(z=>`<option value="${esc(z.code)}">${esc(z.name)} (${esc(z.code)})</option>`).join('');if(ov)$('#oz').value=ov;
+  const q=($('#zs').value||'').trim().toLowerCase();
+  $('#sl').innerHTML=DB.sizes.map((s,i)=>[s,i]).filter(([s])=>!q||(s.name+' '+s.code).toLowerCase().includes(q)).map(([s,i])=>`<tr><td><input value="${esc(s.code)}" onchange="rc(${i},this.value)" style="width:95px;text-transform:uppercase"></td><td><input value="${esc(s.name)}" onchange="rn(${i},this.value)" style="text-transform:uppercase"></td><td><input type="number" step="any" value="${s.w||''}" onchange="DB.sizes[${i}].w=+this.value;sv()" style="width:75px"></td><td><input type="number" step="any" value="${s.rate}" onchange="DB.sizes[${i}].rate=+this.value;sv()" style="width:75px"></td><td><b>${s.stock.toFixed(2)}</b> kg</td><td><input type="number" step="any" id="k${i}" placeholder="kg" style="width:85px"></td><td class="ac"><button onclick="st(${i},1)">+ Add</button><button onclick="st(${i},0)">Set</button><button onclick="openL=openL==${i}?-1:${i};rs()">History</button><button class="dg" onclick="dz(${i})">Delete</button></td></tr>${openL==i?`<tr><td colspan="7">${ledger(s)}</td></tr>`:''}`).join('')||'<tr><td colspan="7">No matching size</td></tr>';
+}
+function rn(i,v){v=v.trim().toUpperCase();if(v){DB.sizes[i].name=v;sv()}openL=-1;rs()}
+function rc(i,v){
+  v=v.trim().toUpperCase();const z=DB.sizes[i];
+  if(!v||v==z.code){rs();return}
+  if(DB.sizes.some((x,j)=>j!=i&&x.code==v)){alert('Code '+v+' is already used');rs();return}
+  DB.bills.forEach(b=>b.items.forEach(it=>{if(it.code==z.code)it.code=v}));
+  z.code=v;sv();rs();
+}
+function st(i,add){
+  const v=parseFloat($('#k'+i).value);if(isNaN(v))return;
+  const z=DB.sizes[i];z.stock=+(add?z.stock+v:v).toFixed(3);
+  z.log.push({d:new Date().toISOString(),t:add?'in':'set',kg:v});sv();rs();
+}
+function dz(i){if(confirm('Delete size '+DB.sizes[i].name+'?')){DB.sizes.splice(i,1);openL=-1;sv();rs()}}
+function az(){
+  const n=$('#zn').value.trim().toUpperCase(),c=$('#zcode').value.trim().toUpperCase();if(!n)return;
+  if(DB.sizes.some(z=>z.name==n))return alert('This size already exists');
+  if(c&&DB.sizes.some(z=>z.code==c))return alert('Code '+c+' is already used');
+  const k=+$('#zk').value||0;addSize(n,k,$('#zr').value,c,$('#zw').value);
+  if(k>0)DB.sizes[DB.sizes.length-1].log.push({d:new Date().toISOString(),t:'in',kg:k});
+  sv();['zn','zcode','zw','zk','zr'].forEach(x=>$('#'+x).value='');openL=-1;rs();
+}
+function addPresets(){
+  PRE.forEach(n=>{if(!DB.sizes.some(z=>z.name==pn(n)))addSize(pn(n),0,0)});
+  sv();rs();
+}
+
+/* ---------- image weights ---------- */
+function oimg(i){const f=i.files[0],m=$('#oi');if(f){m.src=URL.createObjectURL(f);m.style.display='block'}$('#ores').hidden=true;$('#os').textContent=''}
+function osum(){
+  const v=$('#otx').value.split(/\s+/).map(parseFloat).filter(x=>!isNaN(x));
+  $('#ocnt').textContent=v.length;$('#otot').textContent=v.reduce((a,b)=>a+b,0).toFixed(2);return v;
+}
+async function ocr(){
+  const f=$('#of').files[0];if(!f)return alert('Choose an image first');
+  if(typeof Tesseract=='undefined')return alert('The image reader could not load. Connect to the internet and reopen the software.');
+  $('#ob').disabled=true;$('#os').textContent='Reading image… 0%';
+  try{
+    const r=await Tesseract.recognize(f,'eng',{logger:m=>{if(m.status=='recognizing text')$('#os').textContent='Reading image… '+Math.round(m.progress*100)+'%'}});
+    const n=r.data.text.replace(/(\d),(\d{3})(?!\d)/g,'$1$2').match(/\d+(?:\.\d+)?/g)||[];
+    $('#otx').value=n.join('\n');$('#ores').hidden=false;osum();
+    $('#os').textContent=n.length?'Check the numbers below. Delete any that are not weights, fix any misread, then add to stock.':'No numbers found. Try a clearer, closer photo.';
+  }catch(e){$('#os').textContent='Could not read the image.'}
+  $('#ob').disabled=false;
+}
+function oadd(){
+  const v=osum(),t=v.reduce((a,b)=>a+b,0),z=zc($('#oz').value);
+  if(!z||t<=0)return alert('Select a size and make sure there are weights');
+  if(!confirm('Add '+t.toFixed(2)+' kg to '+z.name+'?'))return;
+  z.stock=+(z.stock+t).toFixed(3);z.log.push({d:new Date().toISOString(),t:'in',kg:+t.toFixed(3),n:'from image, '+v.length+' weights'});
+  sv();$('#otx').value='';$('#ores').hidden=true;$('#of').value='';$('#oi').style.display='none';$('#os').textContent='Added to '+z.name;rs();
+}
+
+/* ---------- dashboard ---------- */
+function dash(){
+  sortSizes();
+  const tot=DB.sizes.reduce((a,z)=>a+z.stock,0),mx=Math.max(1,...DB.sizes.map(z=>z.stock));
+  $('#dtot').innerHTML=`<span style="font-size:28px;font-weight:700">${tot.toFixed(2)} kg</span> <span class="mu">available across ${DB.sizes.length} sizes</span>`;
+  $('#dgrid').innerHTML=DB.sizes.map(z=>{
+    const pc=z.w?Math.floor(z.stock/z.w+1e-9):null;
+    return `<div class="card dc"><div class="mu">${esc(z.code)}</div><h3>${esc(z.name)}</h3><div class="big${z.stock<=0?' neg':''}">${z.stock.toFixed(2)} kg</div>${pc!==null?`<div><b>${pc}</b> rods <small>(${z.w} kg each)</small></div>`:'<small>Set “Wt / rod” in Stock to see rod count</small>'}<div class="bar"><i style="width:${Math.max(0,z.stock)/mx*100}%"></i></div></div>`;
+  }).join('')||'<div class="card">No sizes yet</div>';
+  const td=new Date().toDateString(),tb=DB.bills.filter(b=>new Date(b.date).toDateString()==td),
+    sm=p=>tb.filter(b=>b.pay==p).reduce((a,b)=>a+b.total,0).toFixed(2),pe=DB.bills.filter(b=>b.pay=='Pending');
+  $('#dsal').innerHTML=`Today: <b>${tb.length}</b> bills · Cash ₹${sm('Cash')} · Online ₹${sm('Online')} · Not paid ₹${sm('Pending')}<br>All pending: <b class="neg">₹${pe.reduce((a,b)=>a+b.total,0).toFixed(2)}</b> in ${pe.length} bill(s)`;
+}
+
+/* ---------- settings / backup ---------- */
+function ss(){
+  const i=$('#ni').value.trim(),p=$('#np').value,r=$('#nr').value.trim();
+  if(i)DB.u.id=i;if(p)DB.u.pw=p;if(r)DB.u.rk=r;DB.shop=$('#sn').value.trim()||DB.shop;DB.addr=$('#sa').value.trim();
+  sv();$('#ni').value=$('#np').value=$('#nr').value='';$('#rk').textContent=DB.u.rk;alert('Saved');
+}
+function bk(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB)],{type:'application/json'}));
+  a.download='jkt-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();
+}
+function rf(inp){
+  const f=inp.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);if(!d.u||!d.sizes||!d.bills)throw 0;
+    if(confirm('Replace ALL current data with this backup?')){DB=d;sv();alert('Backup restored. Please login.');location.reload()}
+  }catch(e){alert('Invalid backup file')}inp.value=''};
+  r.readAsText(f);
+}
+/* ---------- permanent file on computer ---------- */
+function fsUi(st){
+  const t=!FH?'⚠ Not saved to a computer file (see Settings)':st=='err'?'⚠ File save failed – reconnect in Settings':'💾 Saved to '+FH.name;
+  const e=$('#fs'),f=$('#fst');if(e)e.textContent=t;if(f)f.textContent=t;
+}
+const FT=[{description:'JKT data',accept:{'application/json':['.json']}}];
+function idb(){return new Promise((res,rej)=>{const r=indexedDB.open('jktfs',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function hGet(){try{const d=await idb();return await new Promise(res=>{const q=d.transaction('h').objectStore('h').get('f');q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})}catch(e){return null}}
+async function hSet(h){try{const d=await idb();await new Promise(res=>{const t=d.transaction('h','readwrite');t.objectStore('h').put(h,'f');t.oncomplete=res;t.onerror=res})}catch(e){}}
+async function wf(){
+  if(!FH)return fsUi();
+  try{const w=await FH.createWritable();await w.write(JSON.stringify(DB));await w.close();fsUi('ok')}catch(e){fsUi('err')}
+}
+async function fsNew(){
+  if(!window.showSaveFilePicker)return alert('This browser cannot save to a file automatically. Use Chrome or Edge on PC, and keep downloading backups.');
+  try{FH=await showSaveFilePicker({suggestedName:'jkt-rod-data.json',types:FT});await hSet(FH);await wf();alert('Data file linked. Every change now saves into it automatically.')}catch(e){}
+}
+async function fsOpen(){
+  if(!window.showOpenFilePicker)return alert('This browser cannot open files this way. Use Chrome or Edge on PC.');
+  try{
+    const [h]=await showOpenFilePicker({types:FT}),d=JSON.parse(await (await h.getFile()).text());
+    if(!d.u||!d.sizes||!d.bills)throw 0;
+    if(!confirm('Load data from this file and replace the current data?'))return;
+    DB=d;FH=h;await hSet(h);sv();alert('Loaded. Please login again.');location.reload();
+  }catch(e){if(!e||e.name!='AbortError')alert('Could not open this file')}
+}
+async function syncFile(){ /* runs on login click (needed for browser permission) */
+  try{
+    const h=await hGet();if(!h)return;
+    if((await h.requestPermission({mode:'readwrite'}))!='granted')return fsUi('err');
+    FH=h;
+    try{const d=JSON.parse(await (await h.getFile()).text());
+      if(d&&d.u&&d.sizes&&d.bills&&(d.ts||0)>(DB.ts||0)){DB=d;try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){}}}catch(e){}
+    fsUi('ok');
+  }catch(e){fsUi('err')}
+}
+function applyTheme(){
+  const t=DB.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  document.documentElement.dataset.theme=t;
+  Q('.tgl').forEach(b=>b.textContent=t=='dark'?'☀️ Light mode':'🌙 Dark mode');
+}
+function tg(){DB.theme=document.documentElement.dataset.theme=='dark'?'light':'dark';sv();applyTheme()}
+ld();applyTheme();
+</script></body></html>
